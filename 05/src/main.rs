@@ -19,15 +19,17 @@ fn main() {
     part_2(&lines, max_x, max_y);
 }
 
-fn part_1(lines: &Vec<Line>, max_x: usize, max_y: usize) {
+fn part_1(lines: &[Line], max_x: usize, max_y: usize) {
     let mut grid = vec![vec![0usize; max_x + 1]; max_y + 1];
     for line in lines {
+        let x_range = range_inclusive(line.x1, line.x2);
+        let y_range = range_inclusive(line.y1, line.y2);
         if line.is_horizontal() {
-            for x in (cmp::min(line.x1, line.x2))..=(cmp::max(line.x1, line.x2)) {
+            for x in x_range {
                 grid[line.y1][x] += 1
             }
         } else if line.is_vertical() {
-            for y in (cmp::min(line.y1, line.y2))..=(cmp::max(line.y1, line.y2)) {
+            for y in y_range {
                 grid[y][line.x1] += 1
             }
         }
@@ -40,43 +42,23 @@ fn part_1(lines: &Vec<Line>, max_x: usize, max_y: usize) {
     println!("Part 1: {:?}", count);
 }
 
-fn part_2(lines: &Vec<Line>, max_x: usize, max_y: usize) {
+fn part_2(lines: &[Line], max_x: usize, max_y: usize) {
     let mut grid = vec![vec![0usize; max_x + 1]; max_y + 1];
     for line in lines {
-        let x_range = (cmp::min(line.x1, line.x2))..=(cmp::max(line.x1, line.x2));
-        let y_range = (cmp::min(line.y1, line.y2))..=(cmp::max(line.y1, line.y2));
+        let x_range = range_inclusive(line.x1, line.x2);
+        let y_range = range_inclusive(line.y1, line.y2);
 
         if line.is_horizontal() {
             for x in x_range {
                 grid[line.y1][x] += 1
             }
-            continue;
         } else if line.is_vertical() {
             for y in y_range {
                 grid[y][line.x1] += 1
             }
-            continue;
-        }
-        // Simpler code beats DRY principles 
-        if line.x1 > line.x2 {
-            if line.y1 > line.y2 {
-                for (x, y) in x_range.rev().zip(y_range.rev()) {
-                    grid[y][x] += 1
-                }
-            } else {
-                for (x, y) in x_range.rev().zip(y_range) {
-                    grid[y][x] += 1
-                }
-            }
         } else {
-            if line.y1 > line.y2 {
-                for (x, y) in x_range.zip(y_range.rev()) {
-                    grid[y][x] += 1
-                }
-            } else {
-                for (x, y) in x_range.zip(y_range) {
-                    grid[y][x] += 1
-                }
+            for (x, y) in x_range.zip(y_range) {
+                grid[y][x] += 1
             }
         }
     }
@@ -124,4 +106,13 @@ impl Line {
     fn is_vertical(&self) -> bool {
         self.x1 == self.x2
     }
+}
+
+fn range_inclusive(a: usize, b: usize) -> impl Iterator<Item = usize> {
+    let range: Box<dyn Iterator<Item = usize>> = if b > a {
+        Box::new(a..=b)
+    } else {
+        Box::new((b..=a).rev())
+    };
+    range
 }
