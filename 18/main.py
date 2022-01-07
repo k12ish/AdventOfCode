@@ -1,25 +1,25 @@
-from abc import ABCMeta
-from typing import Mapping
-
-
 class SnailFishNumber:
     def __init__(self, left, right, parent=None):
         if isinstance(left, SnailFishNumber):
-            left.parent = self
+            self.left = left
+            self.left.parent = self
         elif isinstance(left, list):
-            left = SnailFishNumber(*left, parent=self)
-        elif not isinstance(left, int):
+            self.left = SnailFishNumber(*left, parent=self)
+        elif isinstance(left, int):
+            self.left = left
+        else:
             RuntimeError("Weird type:", left)
 
         if isinstance(right, SnailFishNumber):
-            right.parent = self
+            self.right = right
+            self.right.parent = self
         elif isinstance(right, list):
-            right = SnailFishNumber(*right, parent=self)
-        elif not isinstance(right, int):
+            self.right = SnailFishNumber(*right, parent=self)
+        elif isinstance(right, int):
+            self.right = right
+        else:
             RuntimeError("Weird type:", right)
 
-        self.left = left
-        self.right = right
         self.parent = parent
 
     def __repr__(self) -> str:
@@ -31,7 +31,7 @@ class SnailFishNumber:
 
     def reduce(self):
         self.explode()
-        while self.split():
+        while self._split():
             pass
         return self
 
@@ -60,22 +60,8 @@ class SnailFishNumber:
             depth += 1
             ancestor = ancestor.parent
         return depth
-
-    def _position(self):
-        pos = 1 / 2
-        ancestor = self.parent
-        while ancestor.parent is not None:
-            if ancestor is ancestor.parent.left:
-                pos = pos / 2
-            else:
-                pos = 1 / 2 + pos / 2
-            ancestor = ancestor.parent
-        return pos
-
-    def __lt__(self, other):
-        assert isinstance(other, SnailFishNumber)
-        return self._position() < other._position()
-
+        
+    """explode all offending children"""
     def explode(self, depth=0):
         if depth == 3:
             if isinstance(self.left, SnailFishNumber):
@@ -88,9 +74,10 @@ class SnailFishNumber:
             if isinstance(self.right, SnailFishNumber):
                 self.right.explode(depth=depth + 1)
 
-    def split(self, depth=0):
+    """split as much as possible, return True if more calls to self._split() required"""
+    def _split(self, depth=0):
         if isinstance(self.left, SnailFishNumber):
-            if self.left.split(depth=depth + 1):
+            if self.left._split(depth=depth + 1):
                 return True
         elif isinstance(self.left, int):
             if self.left >= 10:
@@ -103,7 +90,7 @@ class SnailFishNumber:
                     return True
 
         if isinstance(self.right, SnailFishNumber):
-            if self.right.split(depth=depth + 1):
+            if self.right._split(depth=depth + 1):
                 return True
         elif isinstance(self.right, int):
             if self.right >= 10:
@@ -115,6 +102,7 @@ class SnailFishNumber:
                 elif big >= 10:
                     return True
 
+    """explode self.left"""
     def _explode_left_sfn(self):
         """Find right neighbour and add self.left.right"""
         # self.right is the right neighbours ancestor
@@ -146,6 +134,7 @@ class SnailFishNumber:
 
         self.left = 0
 
+    """explode self.right"""
     def _explode_right_sfn(self):
         """Find left neighbour and add self.right.left"""
         # self.left is the left neighbours ancestor
@@ -178,20 +167,16 @@ class SnailFishNumber:
 
 
 with open("input.txt") as f:
-    sum = SnailFishNumber(*eval(f.readline()))
-    for line in f.readlines():
-        sum = sum + SnailFishNumber(*eval(line))
+    list_of_lists = [eval(line) for line in f.readlines()]
 
-print("Sum", sum.magnitude())
-
+sum = SnailFishNumber(*list_of_lists[0])
+for elem in list_of_lists[1:]:
+    sum += SnailFishNumber(*elem)
+print("Sum:", sum.magnitude())
 
 mag = 0
-with open("input.txt") as f:
-    lists = [eval(line) for line in f.readlines()]
-        
-for l1 in lists:
-    for l2 in lists:
-        sum = SnailFishNumber(*l1) + SnailFishNumber(*l2)
+for item1 in list_of_lists:
+    for item2 in list_of_lists:
+        sum = SnailFishNumber(*item1) + SnailFishNumber(*item2)
         mag = max(mag, sum.magnitude())
-
-print("Maximum magnitude", mag)
+print("Maximum magnitude:", mag)
