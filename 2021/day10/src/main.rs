@@ -37,7 +37,7 @@ impl Syntax {
         }
         Score::AutoCorrect(syntax.autocorrect())
     }
-    
+
     /// Update syntax, return Some(i64) if char is incompatible with stack
     fn extend(&mut self, c: char) -> Option<i64> {
         match c {

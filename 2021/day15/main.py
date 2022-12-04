@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import heapq
+from dataclasses import dataclass
 
 with open("input.txt") as f:
     input_grid = [[int(i) for i in line.strip()] for line in f.readlines()]

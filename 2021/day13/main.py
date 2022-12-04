@@ -34,7 +34,7 @@ for line in instructions:
 x_max = max(x for x, y in coords) + 1
 y_max = max(y for x, y in coords) + 1
 
-# Did you know [[" "] * x_max] * y_max reuses the same instance of 
+# Did you know [[" "] * x_max] * y_max reuses the same instance of
 # [" "] * x_max for each row? This means that every row gets modified
 # every time we modify arr[y][x] for no apparent reason...
 

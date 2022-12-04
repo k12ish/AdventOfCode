@@ -60,8 +60,9 @@ class SnailFishNumber:
             depth += 1
             ancestor = ancestor.parent
         return depth
-        
+
     """explode all offending children"""
+
     def explode(self, depth=0):
         if depth == 3:
             if isinstance(self.left, SnailFishNumber):
@@ -75,6 +76,7 @@ class SnailFishNumber:
                 self.right.explode(depth=depth + 1)
 
     """split as much as possible, return True if more calls to self._split() required"""
+
     def _split(self, depth=0):
         if isinstance(self.left, SnailFishNumber):
             if self.left._split(depth=depth + 1):
@@ -103,6 +105,7 @@ class SnailFishNumber:
                     return True
 
     """explode self.left"""
+
     def _explode_left_sfn(self):
         """Find right neighbour and add self.left.right"""
         # self.right is the right neighbours ancestor
@@ -135,6 +138,7 @@ class SnailFishNumber:
         self.left = 0
 
     """explode self.right"""
+
     def _explode_right_sfn(self):
         """Find left neighbour and add self.right.left"""
         # self.left is the left neighbours ancestor

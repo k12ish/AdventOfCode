@@ -33,20 +33,19 @@ def make_translation_table(input):
             table[w] = 6
         else:
             table[w] = 0
-    
+
     return table
 
 
 def translate(words, table):
     words = [frozenset(w) for w in words]
-    table = {frozenset(k):v for (k,v) in table.items()}
+    table = {frozenset(k): v for (k, v) in table.items()}
     sum = 0
     for word in words:
         sum *= 10
         sum += table[word]
     return sum
 
-    
 
 sum = 0
 with open('input.txt') as f:

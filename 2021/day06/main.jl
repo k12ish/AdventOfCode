@@ -12,7 +12,7 @@ Suppose we have one lanternfish in state '3' which reduces to '2' after a day.
 In notation, this may be described as:
     D('3') = '2'
 A lanternfish in state '0' creates two lanternfish:
-    D('0') = '6' + '8' 
+    D('0') = '6' + '8'
 Two lanternfish in state '3' both grow into state '2':
     D(2'3') = 2'2'
 In general, if a lanternfish in state 'm' grows into state 'n', then k lanternfish

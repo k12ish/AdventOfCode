@@ -1,17 +1,16 @@
 from collections import defaultdict
 
-
 graph = defaultdict(set)
 
 with open("input.txt") as w:
     for line in w.readlines():
         source, dest = line.strip().split("-")
-        graph[source] = set((dest, *graph[source]))
-        graph[dest] = set((source, *graph[dest]))
+        graph[source] = {dest, *graph[source]}
+        graph[dest] = {source, *graph[dest]}
 
 """
 Depth first search of 'end' through graph
-    
+
 yields list[str] where each each list represents a path through graph
 """
 

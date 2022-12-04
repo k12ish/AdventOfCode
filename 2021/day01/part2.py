@@ -8,6 +8,6 @@ with open('input.txt') as f:
         if prev and item > prev:
             total += 1
         prev = item
-    
+
 
 print(total)

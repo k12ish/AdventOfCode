@@ -40,7 +40,7 @@ for line in rest
 end
 
 
-# A dict of char pairs and initial count 
+# A dict of char pairs and initial count
 # Dict{Any, Int64}(('F', 'N') => 1, ('K', 'O') => 1, ...)
 initial_counts = countmap(initial_pairs)
 
