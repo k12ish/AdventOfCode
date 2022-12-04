@@ -1,2 +1,5 @@
+# Don't display `input.txt`, `sample.txt` ect. in `git diff`
+*.txt=nodiff
+
 # Auto detect text files and perform LF normalization
 * text=auto
