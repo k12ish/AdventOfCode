@@ -150,7 +150,7 @@ pub fn main(init: std.process.Init) !void {
             break;
 
         total += removed.map.count();
-        std.log.debug("removed {} papers, total {}", .{ removed.map.count(), total });
+        std.log.info("removed {} papers, total {}", .{ removed.map.count(), total });
 
         std.mem.swap(@TypeOf(img.map), &img.map, &kept.map);
     }
