@@ -17,7 +17,8 @@ const SAMPLE: []const u8 =
 
 const Parser = struct {
     const Result = struct {
-        ranges: std.array_list.Managed(struct { usize, usize }),
+        const Pair = struct { usize, usize };
+        ranges: std.array_list.Managed(Pair),
         points: std.array_list.Managed(usize),
 
         fn deinit(self: *@This()) void {
@@ -26,7 +27,7 @@ const Parser = struct {
         }
 
         /// returns count of FRESH items
-        fn count(self: *const @This()) usize {
+        fn countPartOne(self: *const @This()) usize {
             var fresh: usize = 0;
             for (self.points.items) |point| {
                 for (self.ranges.items) |pair| {
@@ -39,6 +40,34 @@ const Parser = struct {
                 }
             }
             return fresh;
+        }
+
+        fn countPartTwo(self: *@This()) usize {
+            const lessThan = struct {
+                fn inner(_: void, lhs: Pair, rhs: Pair) bool {
+                    if (lhs.@"0" < rhs.@"0") {
+                        return true;
+                    }
+                    return false;
+                }
+            }.inner;
+
+            std.sort.insertion(Pair, self.ranges.items, {}, lessThan);
+
+            var min_start = self.ranges.items[0].@"0";
+            var max_end = self.ranges.items[0].@"0";
+            var count: usize = 0;
+            for (self.ranges.items) |pair| {
+                if (pair.@"0" > max_end) {
+                    count += max_end - min_start + 1;
+                    min_start = pair.@"0";
+                    max_end = pair.@"1";
+                } else {
+                    max_end = @max(max_end, pair.@"1");
+                }
+            }
+            count += max_end - min_start + 1;
+            return count;
         }
     };
 
@@ -79,7 +108,8 @@ test Parser {
     try std.testing.expectEqual(input.ranges.items.len, 4);
     try std.testing.expectEqual(input.points.items.len, 6);
 
-    try std.testing.expectEqual(input.count(), 3);
+    try std.testing.expectEqual(input.countPartOne(), 3);
+    try std.testing.expectEqual(input.countPartTwo(), 14);
 }
 
 const INPUT = @embedFile("./input.txt");
@@ -92,5 +122,6 @@ pub fn main(init: std.process.Init) !void {
     std.log.info("item count in ranges: {}", .{input.ranges.items.len});
     std.log.info("item count in points: {}", .{input.points.items.len});
 
-    std.log.info("part one result: {}", .{input.count()});
+    std.log.info("part one result: {}", .{input.countPartOne()});
+    std.log.info("part two result: {}", .{input.countPartTwo()});
 }
